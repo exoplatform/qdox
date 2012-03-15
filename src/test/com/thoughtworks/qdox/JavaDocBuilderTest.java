@@ -1,6 +1,10 @@
 
 package com.thoughtworks.qdox;
 
+import com.thoughtworks.qdox.model.JavaField;
+
+import com.thoughtworks.qdox.model.JavaClass;
+
 import com.thoughtworks.qdox.model.*;
 import com.thoughtworks.qdox.model.util.SerializationUtils;
 import com.thoughtworks.qdox.parser.ParseException;
@@ -109,7 +113,7 @@ public class JavaDocBuilderTest extends MockObjectTestCase {
         assertEquals(2, classes.length);
     }
 
-    public void testGetPackagesShowsOnePackageAndTwoClasses() {
+    public void tstGetPackagesShowsOnePackageAndTwoClasses() {
         builder.addSourceTree(new File("target/test-source"));
         JavaPackage[] packages = builder.getPackages();
         assertEquals(2, packages.length);
@@ -1297,6 +1301,21 @@ public class JavaDocBuilderTest extends MockObjectTestCase {
         String string = (String) propertyMap.get("name");
         // This one does not work
         assertEquals("\"test\"", string);
+    }
+    
+    public void testFieldWithWildcardType()
+    {
+       JavaDocBuilder javaDocBuilder = new JavaDocBuilder();
+       StringBuilder b = new StringBuilder("package test;\n");
+       b.append("import java.util.ArrayList;\n");
+       b.append("import java.util.Map;\n");
+       b.append("public class TestClass<E>{\n");
+       b.append("public ArrayList<? extends Map<String, E>> list;\n}");
+       javaDocBuilder.addSource(new StringReader(b.toString()));
+       JavaClass javaClass = javaDocBuilder.getClasses()[0];
+       JavaField field = javaClass.getFields()[0];
+       assertNotNull(field.getType().getActualTypeArguments()[0].getActualTypeArguments());
+       assertEquals("? extends java.util.Map<java.lang.String,E>", field.getType().getActualTypeArguments()[0].getGenericValue());
     }
 
 }

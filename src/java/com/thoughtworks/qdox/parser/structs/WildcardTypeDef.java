@@ -23,6 +23,7 @@ public class WildcardTypeDef extends TypeDef {
 		super(typeDef.name, typeDef.dimensions);
 		this.typeDef = typeDef;
 		this.wildcardExpressionType = wildcardExpressionType;
+		this.actualArgumentTypes = typeDef.actualArgumentTypes;
 	}
 	
 	public TypeDef getTypeDef() {
